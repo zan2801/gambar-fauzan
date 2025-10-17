@@ -20,7 +20,7 @@ yolo_model, classifier = load_models()
 # ==========================
 # UI
 # ==========================
-st.title("🧠 Image Classification & Object Detection App")
+st.title("🧠 Image Classification & Object Detection App by Fauzan")
 
 menu = st.sidebar.selectbox("Pilih Mode:", ["Deteksi Objek (YOLO)", "Klasifikasi Gambar"])
 
