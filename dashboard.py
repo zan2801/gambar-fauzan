@@ -7,6 +7,15 @@ from PIL import Image
 import cv2
 
 # ==========================
+# Konfigurasi Halaman
+# ==========================
+st.set_page_config(
+    page_title="Image Intelligence App",
+    page_icon="🧠",
+    layout="centered"
+)
+
+# ==========================
 # Load Models
 # ==========================
 @st.cache_resource
@@ -18,33 +27,66 @@ def load_models():
 yolo_model, classifier = load_models()
 
 # ==========================
-# UI
+# Header
 # ==========================
-st.title("🧠 Image Classification & Object Detection App by Fauzan")
+st.markdown("""
+<h1 style='text-align:center;'>🧠 Image Intelligence App</h1>
+<p style='text-align:center; color:gray;'>
+Dibuat oleh <b>Fauzan Akbar</b> — Deteksi Objek & Klasifikasi Gambar berbasis AI
+</p>
+<hr style='border: 1px solid #e0e0e0;'>
+""", unsafe_allow_html=True)
 
-menu = st.sidebar.selectbox("Pilih Mode:", ["Deteksi Objek (YOLO)", "Klasifikasi Gambar"])
+# ==========================
+# Sidebar
+# ==========================
+st.sidebar.header("⚙️ Pengaturan")
+menu = st.sidebar.radio("Pilih Mode:", ["Deteksi Objek (YOLO)", "Klasifikasi Gambar"])
+st.sidebar.info("Unggah gambar dan pilih mode analisis di atas 👆")
 
-uploaded_file = st.file_uploader("Unggah Gambar", type=["jpg", "jpeg", "png"])
+# ==========================
+# Upload Gambar
+# ==========================
+uploaded_file = st.file_uploader("📤 Unggah Gambar", type=["jpg", "jpeg", "png"])
 
 if uploaded_file is not None:
-    img = Image.open(uploaded_file)
-    st.image(img, caption="Gambar yang Diupload", use_container_width=True)
+    img = Image.open(uploaded_file).convert("RGB")
+    st.image(img, caption="📸 Gambar yang Diupload", use_container_width=True)
+    st.write("---")
 
     if menu == "Deteksi Objek (YOLO)":
-        # Deteksi objek
-        results = yolo_model(img)
-        result_img = results[0].plot()  # hasil deteksi (gambar dengan box)
-        st.image(result_img, caption="Hasil Deteksi", use_container_width=True)
+        with st.spinner("🔍 Sedang mendeteksi objek..."):
+            results = yolo_model(img)
+            result_img = results[0].plot()
+            st.image(result_img, caption="🧾 Hasil Deteksi", use_container_width=True)
+        st.success("✅ Deteksi selesai!")
 
     elif menu == "Klasifikasi Gambar":
-        # Preprocessing
-        img_resized = img.resize((224, 224))  # sesuaikan ukuran dengan model kamu
-        img_array = image.img_to_array(img_resized)
-        img_array = np.expand_dims(img_array, axis=0)
-        img_array = img_array / 255.0
+        with st.spinner("🧠 Menganalisis gambar..."):
+            img_resized = img.resize((224, 224))  # sesuaikan dengan input model kamu
+            img_array = image.img_to_array(img_resized)
+            img_array = np.expand_dims(img_array, axis=0)
+            img_array = img_array / 255.0
 
-        # Prediksi
-        prediction = classifier.predict(img_array)
-        class_index = np.argmax(prediction)
-        st.write("### Hasil Prediksi:", class_index)
-        st.write("Probabilitas:", np.max(prediction))
+            prediction = classifier.predict(img_array)
+            class_index = np.argmax(prediction)
+            confidence = float(np.max(prediction))
+
+        st.subheader("🔎 Hasil Prediksi")
+        st.metric(label="Kelas Prediksi", value=f"{class_index}")
+        st.progress(confidence)
+        st.caption(f"Probabilitas: **{confidence:.2%}**")
+
+        st.success("🎉 Analisis selesai!")
+
+else:
+    st.info("👆 Unggah gambar untuk memulai analisis.")
+
+# ==========================
+# Footer
+# ==========================
+st.write("---")
+st.markdown(
+    "<p style='text-align:center; color:gray;'>✨ Powered by TensorFlow & YOLO — Streamlit Edition</p>",
+    unsafe_allow_html=True
+)
