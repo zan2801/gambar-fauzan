@@ -8,44 +8,61 @@ from tensorflow.keras.preprocessing import image
 # ==============================
 # KONFIGURASI DASAR
 # ==============================
-st.set_page_config(page_title="🌌 Klasifikasi & Deteksi Objek", layout="wide")
+st.set_page_config(page_title="🌌 SpaceVision AI", layout="wide")
 
 # ==============================
-# GAYA DAN TEMA LUAR ANGKASA
+# GAYA LUAR ANGKASA (BIRU-HITAM-PUTIH)
 # ==============================
 st.markdown("""
     <style>
-        body {
-            background: radial-gradient(circle at top left, #0b0c2a, #1c2350);
+        [data-testid="stAppViewContainer"] {
+            background: linear-gradient(135deg, #0a0f24 20%, #001233 100%);
             color: white;
         }
-        .title {
-            text-align: center;
-            color: #ffffff;
-            font-size: 40px;
-            font-weight: bold;
+        [data-testid="stHeader"] {
+            background: rgba(0,0,0,0);
         }
-        .subtitle {
+        h1, h2, h3, h4, h5, h6 {
+            color: #ffffff;
             text-align: center;
-            color: #dddddd;
+        }
+        .desc {
+            text-align: center;
+            color: #dbeafe;
             font-size: 18px;
+        }
+        .button-box {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 40px;
         }
         .stButton>button {
-            background-color: #3b82f6;
+            background: linear-gradient(90deg, #2563eb, #3b82f6);
             color: white;
-            border-radius: 12px;
-            height: 60px;
-            font-size: 18px;
+            border-radius: 15px;
+            font-size: 20px;
             font-weight: bold;
+            padding: 15px 40px;
+            border: none;
             transition: 0.3s;
+            box-shadow: 0 0 20px rgba(37,99,235,0.4);
         }
         .stButton>button:hover {
-            background-color: #60a5fa;
-            transform: scale(1.05);
+            transform: scale(1.08);
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            box-shadow: 0 0 30px rgba(96,165,250,0.7);
         }
-        .block-container {
-            padding-top: 2rem;
-            padding-bottom: 1rem;
+        .back-button>button {
+            background: none;
+            color: #93c5fd;
+            border: 1px solid #2563eb;
+            padding: 8px 20px;
+            border-radius: 10px;
+        }
+        .back-button>button:hover {
+            background-color: #1e3a8a;
+            color: white;
         }
     </style>
 """, unsafe_allow_html=True)
@@ -65,75 +82,75 @@ yolo_model = load_yolo()
 clf_model = load_classifier()
 
 # ==============================
-# NAVIGASI HALAMAN
+# SISTEM HALAMAN
 # ==============================
-menu = st.sidebar.radio(
-    "🧭 Navigasi",
-    ["🏠 Halaman Utama", "🛸 Deteksi Objek", "🪐 Klasifikasi Gambar"]
-)
+if "page" not in st.session_state:
+    st.session_state.page = "home"
+
+def goto(page):
+    st.session_state.page = page
 
 # ==============================
 # HALAMAN UTAMA
 # ==============================
-if menu == "🏠 Halaman Utama":
-    st.markdown("<h1 class='title'>🌠 Gambar & Deteksi Objek</h1>", unsafe_allow_html=True)
-    st.markdown("<p class='subtitle'>Pilih misi eksplorasi AI di galaksi luar angkasa 🚀</p>", unsafe_allow_html=True)
+if st.session_state.page == "home":
+    st.markdown("<h1>🌌 SpaceVision AI</h1>", unsafe_allow_html=True)
+    st.markdown("<p class='desc'>Jelajahi dunia kecerdasan buatan di galaksi luar angkasa.<br>Pilih misi eksplorasimu di bawah ini 🚀</p>", unsafe_allow_html=True)
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([1, 1])
     with col1:
-        st.image("https://i.ibb.co/hLhL5Q7/astronaut.png", use_container_width=True)
-
-    with col2:
-        st.markdown("### Pilih Mode:")
         if st.button("🪐 Klasifikasi Gambar"):
-            st.session_state["page"] = "klasifikasi"
+            goto("classify")
+    with col2:
         if st.button("🛸 Deteksi Objek"):
-            st.session_state["page"] = "deteksi"
-
-    if "page" in st.session_state:
-        if st.session_state["page"] == "klasifikasi":
-            menu = "🪐 Klasifikasi Gambar"
-        elif st.session_state["page"] == "deteksi":
-            menu = "🛸 Deteksi Objek"
-
-# ==============================
-# HALAMAN DETEKSI OBJEK
-# ==============================
-if menu == "🛸 Deteksi Objek":
-    st.markdown("<h1 class='title'>🛸 Deteksi Objek</h1>", unsafe_allow_html=True)
-    st.markdown("<p class='subtitle'>Unggah gambar dan biarkan AI mendeteksi objek seperti penjelajah kosmik!</p>", unsafe_allow_html=True)
-
-    uploaded = st.file_uploader("🚀 Unggah gambar", type=["jpg", "jpeg", "png"])
-    if uploaded:
-        img = Image.open(uploaded)
-        st.image(img, caption="🪞 Gambar Asli", use_container_width=True)
-
-        with st.spinner("Mendeteksi objek... 🪐"):
-            results = yolo_model(img)
-            result_img = results[0].plot()
-
-        st.image(result_img, caption="🔍 Hasil Deteksi", use_container_width=True)
-        st.success("✅ Deteksi selesai!")
+            goto("detect")
 
 # ==============================
 # HALAMAN KLASIFIKASI GAMBAR
 # ==============================
-if menu == "🪐 Klasifikasi Gambar":
-    st.markdown("<h1 class='title'>🪐 Klasifikasi Gambar</h1>", unsafe_allow_html=True)
-    st.markdown("<p class='subtitle'>Unggah gambar dan biarkan AI menentukan kelasnya di antara bintang-bintang ✨</p>", unsafe_allow_html=True)
+elif st.session_state.page == "classify":
+    st.markdown("<h1>🪐 Klasifikasi Gambar</h1>", unsafe_allow_html=True)
+    st.markdown("<p class='desc'>Unggah gambar dan biarkan AI menentukan kelasnya di antara bintang-bintang ✨</p>", unsafe_allow_html=True)
 
-    uploaded = st.file_uploader("🌌 Unggah gambar", type=["jpg", "jpeg", "png"])
+    uploaded = st.file_uploader("Unggah gambar (JPG/PNG)", type=["jpg", "jpeg", "png"])
     if uploaded:
         img = Image.open(uploaded)
-        st.image(img, caption="🪞 Gambar Asli", use_container_width=True)
+        st.image(img, caption="Gambar Asli", use_container_width=True)
 
         img_resized = img.resize((224, 224))
         img_array = image.img_to_array(img_resized)
         img_array = np.expand_dims(img_array, axis=0) / 255.0
 
-        with st.spinner("Mengklasifikasikan... 🌠"):
+        with st.spinner("🚀 Mengklasifikasikan..."):
             pred = clf_model.predict(img_array)
             class_idx = np.argmax(pred)
             prob = np.max(pred)
 
         st.success(f"🌌 Hasil Prediksi: **Kelas {class_idx}** (Probabilitas: {prob:.2f})")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("⬅️ Kembali ke Halaman Utama", key="back1"):
+        goto("home")
+
+# ==============================
+# HALAMAN DETEKSI OBJEK
+# ==============================
+elif st.session_state.page == "detect":
+    st.markdown("<h1>🛸 Deteksi Objek</h1>", unsafe_allow_html=True)
+    st.markdown("<p class='desc'>Unggah gambar dan biarkan AI menemukan objek di dalamnya 👁️‍🗨️</p>", unsafe_allow_html=True)
+
+    uploaded = st.file_uploader("Unggah gambar (JPG/PNG)", type=["jpg", "jpeg", "png"])
+    if uploaded:
+        img = Image.open(uploaded)
+        st.image(img, caption="Gambar Asli", use_container_width=True)
+
+        with st.spinner("🛰️ Mendeteksi objek..."):
+            results = yolo_model(img)
+            result_img = results[0].plot()
+
+        st.image(result_img, caption="Hasil Deteksi", use_container_width=True)
+        st.success("✅ Deteksi selesai!")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    if st.button("⬅️ Kembali ke Halaman Utama", key="back2"):
+        goto("home")
