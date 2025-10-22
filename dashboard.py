@@ -11,6 +11,18 @@ PRIMARY_COLOR = "#3b82f6"  # biru
 BG_COLOR = "#0b0f2e"       # biru tua kehitaman
 TEXT_COLOR = "#ffffff"     # putih
 
+# Override background bawaan Streamlit agar tidak putih
+st.markdown(f"""
+    <style>
+        [data-testid="stAppViewContainer"] {{
+            background-color: {BG_COLOR} !important;
+            color: {TEXT_COLOR};
+        }}
+        [data-testid="stHeader"] {{background: rgba(0,0,0,0);}}
+        [data-testid="stToolbar"] {{right: 2rem;}}
+    </style>
+""", unsafe_allow_html=True)
+
 # Simpan state halaman
 if "page" not in st.session_state:
     st.session_state.page = "main"
@@ -27,13 +39,13 @@ def header(title, subtitle=""):
 # ==========================
 # FUNGSI: LATAR BELAKANG BINTANG
 # ==========================
-def draw_stars(num_stars=80):
+def draw_stars(num_stars=100):
     stars_html = ""
     for _ in range(num_stars):
         left = random.randint(0, 100)
         top = random.randint(0, 100)
-        size = random.randint(10, 22)  # ukuran font kecil agar tidak terlalu mencolok
-        opacity = random.uniform(0.4, 1)
+        size = random.randint(8, 20)
+        opacity = random.uniform(0.3, 0.9)
         stars_html += f"""
             <div style="
                 position: absolute;
@@ -84,4 +96,28 @@ if st.session_state.page == "main":
     with col3:
         st.empty()
 
-# =======
+# ==========================
+# HALAMAN KLASIFIKASI
+# ==========================
+elif st.session_state.page == "classify":
+    header("🧠 Klasifikasi Gambar", "Unggah gambar untuk diidentifikasi model AI kamu")
+    uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
+    if uploaded_file:
+        st.image(uploaded_file, caption="Gambar yang diunggah", use_column_width=True)
+    st.write("")
+    if st.button("⬅️ Kembali ke Halaman Utama"):
+        st.session_state.page = "main"
+        st.rerun()
+
+# ==========================
+# HALAMAN DETEKSI
+# ==========================
+elif st.session_state.page == "detect":
+    header("🛰️ Deteksi Objek", "Unggah gambar untuk melakukan deteksi objek menggunakan model YOLO")
+    uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
+    if uploaded_file:
+        st.image(uploaded_file, caption="Gambar yang diunggah", use_column_width=True)
+    st.write("")
+    if st.button("⬅️ Kembali ke Halaman Utama"):
+        st.session_state.page = "main"
+        st.rerun()
