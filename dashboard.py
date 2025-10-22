@@ -1,83 +1,87 @@
 import streamlit as st
-import numpy as np
-import matplotlib.pyplot as plt
-import time
+import random
 
-# ===============================
-# Konfigurasi Halaman
-# ===============================
+# ==========================
+# KONFIGURASI HALAMAN
+# ==========================
 st.set_page_config(page_title="SpaceVision AI", page_icon="🪐", layout="wide")
 
-# ===============================
-# Fungsi untuk Membuat Langit Berbintang
-# ===============================
-def draw_starry_sky(num_stars=150):
-    fig, ax = plt.subplots(figsize=(10, 6))
-    ax.set_facecolor("#020b26")  # Warna langit malam (gelap kebiruan)
-    x = np.random.rand(num_stars)
-    y = np.random.rand(num_stars)
-    sizes = np.random.randint(10, 80, size=num_stars)
-    colors = np.random.choice(["white", "#A9DFFF", "#FFDAB9", "#B0E0E6"], size=num_stars)
-    ax.scatter(x, y, s=sizes, color=colors, alpha=0.8)
-    ax.axis("off")
-    st.pyplot(fig)
+# Tema warna
+PRIMARY_COLOR = "#3b82f6"  # biru
+BG_COLOR = "#0b0f2e"       # biru tua kehitaman
+TEXT_COLOR = "#ffffff"     # putih
 
-# ===============================
-# Navigasi Halaman
-# ===============================
+# Simpan state halaman
 if "page" not in st.session_state:
-    st.session_state.page = "home"
+    st.session_state.page = "main"
 
-# Tombol navigasi balik
-def go_home():
-    st.session_state.page = "home"
+# ==========================
+# FUNGSI: HEADER
+# ==========================
+def header(title, subtitle=""):
+    st.markdown(f"<h1 style='text-align:center; color:{TEXT_COLOR};'>{title}</h1>", unsafe_allow_html=True)
+    if subtitle:
+        st.markdown(f"<p style='text-align:center; color:{TEXT_COLOR}; font-size:18px;'>{subtitle}</p>", unsafe_allow_html=True)
+    st.write("")
 
-# ===============================
-# Halaman Utama
-# ===============================
-if st.session_state.page == "home":
-    st.markdown("<h1 style='text-align: center; color: white;'>🪐 SpaceVision AI</h1>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #B0E0E6;'>Jelajahi dunia kecerdasan buatan di galaksi luar angkasa.<br>Pilih misimu di bawah ini 🚀</p>", unsafe_allow_html=True)
+# ==========================
+# FUNGSI: LATAR BELAKANG BINTANG
+# ==========================
+def draw_stars(num_stars=80):
+    stars_html = ""
+    for _ in range(num_stars):
+        left = random.randint(0, 100)
+        top = random.randint(0, 100)
+        size = random.randint(10, 22)  # ukuran font kecil agar tidak terlalu mencolok
+        opacity = random.uniform(0.4, 1)
+        stars_html += f"""
+            <div style="
+                position: absolute;
+                left: {left}%;
+                top: {top}%;
+                font-size: {size}px;
+                color: {TEXT_COLOR};
+                opacity: {opacity};
+                z-index: 0;
+            ">⭐</div>
+        """
+    st.markdown(f"""
+        <div style="
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            background-color: {BG_COLOR};
+            overflow: hidden;
+            z-index: -1;
+        ">
+            {stars_html}
+        </div>
+    """, unsafe_allow_html=True)
+
+# ==========================
+# TAMPILKAN BINTANG DI SEMUA HALAMAN
+# ==========================
+draw_stars(100)
+
+# ==========================
+# HALAMAN UTAMA
+# ==========================
+if st.session_state.page == "main":
+    header("🪐 SpaceVision AI", "Jelajahi dunia kecerdasan buatan di galaksi luar angkasa 🚀")
     
-    draw_starry_sky(200)
-
-    col1, col2, col3 = st.columns([1,2,1])
+    col1, col2, col3 = st.columns([1, 1, 1])
     with col1:
-        pass
+        st.empty()
     with col2:
-        st.markdown("<br>", unsafe_allow_html=True)
-        b1, b2 = st.columns(2)
-        with b1:
-            if st.button("🌌 Klasifikasi Gambar"):
-                st.session_state.page = "klasifikasi"
-        with b2:
-            if st.button("🛰️ Deteksi Objek"):
-                st.session_state.page = "deteksi"
+        st.write("### Pilih Misi Kamu:")
+        st.write("")
+        if st.button("🧠 Klasifikasi Gambar", use_container_width=True):
+            st.session_state.page = "classify"
+            st.rerun()
+        if st.button("🛰️ Deteksi Objek", use_container_width=True):
+            st.session_state.page = "detect"
+            st.rerun()
     with col3:
-        pass
+        st.empty()
 
-# ===============================
-# Halaman Klasifikasi
-# ===============================
-elif st.session_state.page == "klasifikasi":
-    st.markdown("<h1 style='text-align: center; color: white;'>🌌 Klasifikasi Gambar</h1>", unsafe_allow_html=True)
-    draw_starry_sky(120)
-    uploaded_file = st.file_uploader("🪐 Pilih gambar dari komputermu", type=["jpg", "jpeg", "png"])
-    if uploaded_file:
-        st.image(uploaded_file, caption="Gambar yang dipilih", use_column_width=True)
-        st.success("Gambar berhasil diunggah! 🚀")
-    if st.button("⬅️ Kembali ke Halaman Utama"):
-        go_home()
-
-# ===============================
-# Halaman Deteksi
-# ===============================
-elif st.session_state.page == "deteksi":
-    st.markdown("<h1 style='text-align: center; color: white;'>🛰️ Deteksi Objek</h1>", unsafe_allow_html=True)
-    draw_starry_sky(120)
-    uploaded_file = st.file_uploader("🚀 Pilih gambar dari komputermu", type=["jpg", "jpeg", "png"])
-    if uploaded_file:
-        st.image(uploaded_file, caption="Gambar yang dipilih", use_column_width=True)
-        st.info("Deteksi sedang diproses... ✨ (tapi ini simulasi dulu 😄)")
-    if st.button("⬅️ Kembali ke Halaman Utama"):
-        go_home()
+# =======
