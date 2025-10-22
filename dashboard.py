@@ -7,11 +7,11 @@ import random
 st.set_page_config(page_title="SpaceVision AI", page_icon="🪐", layout="wide")
 
 # Tema warna
-PRIMARY_COLOR = "#3b82f6"  # biru
-BG_COLOR = "#0b0f2e"       # biru tua kehitaman
-TEXT_COLOR = "#ffffff"     # putih
+PRIMARY_COLOR = "#3b82f6"
+BG_COLOR = "#0b0f2e"
+TEXT_COLOR = "#ffffff"
 
-# Override background bawaan Streamlit agar tidak putih
+# Background app
 st.markdown(f"""
     <style>
         [data-testid="stAppViewContainer"] {{
@@ -27,8 +27,9 @@ st.markdown(f"""
 if "page" not in st.session_state:
     st.session_state.page = "main"
 
+
 # ==========================
-# FUNGSI HEADER
+# HEADER
 # ==========================
 def header(title, subtitle=""):
     st.markdown(f"<h1 style='text-align:center; color:{TEXT_COLOR};'>{title}</h1>", unsafe_allow_html=True)
@@ -36,14 +37,19 @@ def header(title, subtitle=""):
         st.markdown(f"<p style='text-align:center; color:{TEXT_COLOR}; font-size:18px;'>{subtitle}</p>", unsafe_allow_html=True)
     st.write("")
 
+
 # ==========================
-# FUNGSI LATAR BELAKANG BINTANG
+# BINTANG
 # ==========================
-def draw_stars(num_stars=80):
+def draw_stars(num_stars=100):
     stars_html = ""
     for _ in range(num_stars):
+        # Acak posisi
         left = random.randint(0, 100)
         top = random.randint(0, 100)
+        # Hindari area tengah (sekitar teks)
+        if 30 < left < 70 and 35 < top < 65:
+            continue
         size = random.randint(8, 18)
         opacity = random.uniform(0.3, 0.9)
         stars_html += f"""
@@ -52,7 +58,7 @@ def draw_stars(num_stars=80):
                 left: {left}%;
                 top: {top}%;
                 font-size: {size}px;
-                color: {TEXT_COLOR};
+                color: gold;
                 opacity: {opacity};
                 z-index: 1;
                 pointer-events: none;
@@ -60,10 +66,12 @@ def draw_stars(num_stars=80):
         """
     st.markdown(stars_html, unsafe_allow_html=True)
 
+
 # ==========================
 # TAMPILKAN BINTANG
 # ==========================
-draw_stars(100)
+draw_stars(150)
+
 
 # ==========================
 # HALAMAN UTAMA
@@ -86,6 +94,7 @@ if st.session_state.page == "main":
     with col3:
         st.empty()
 
+
 # ==========================
 # HALAMAN KLASIFIKASI
 # ==========================
@@ -98,6 +107,7 @@ elif st.session_state.page == "classify":
     if st.button("⬅️ Kembali ke Halaman Utama"):
         st.session_state.page = "main"
         st.rerun()
+
 
 # ==========================
 # HALAMAN DETEKSI
