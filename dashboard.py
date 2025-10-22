@@ -28,7 +28,7 @@ if "page" not in st.session_state:
     st.session_state.page = "main"
 
 # ==========================
-# FUNGSI: HEADER
+# FUNGSI HEADER
 # ==========================
 def header(title, subtitle=""):
     st.markdown(f"<h1 style='text-align:center; color:{TEXT_COLOR};'>{title}</h1>", unsafe_allow_html=True)
@@ -37,41 +37,31 @@ def header(title, subtitle=""):
     st.write("")
 
 # ==========================
-# FUNGSI: LATAR BELAKANG BINTANG
+# FUNGSI LATAR BELAKANG BINTANG
 # ==========================
-def draw_stars(num_stars=100):
+def draw_stars(num_stars=80):
     stars_html = ""
     for _ in range(num_stars):
         left = random.randint(0, 100)
         top = random.randint(0, 100)
-        size = random.randint(8, 20)
+        size = random.randint(8, 18)
         opacity = random.uniform(0.3, 0.9)
         stars_html += f"""
             <div style="
-                position: absolute;
+                position: fixed;
                 left: {left}%;
                 top: {top}%;
                 font-size: {size}px;
                 color: {TEXT_COLOR};
                 opacity: {opacity};
-                z-index: 0;
+                z-index: 1;
+                pointer-events: none;
             ">⭐</div>
         """
-    st.markdown(f"""
-        <div style="
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            background-color: {BG_COLOR};
-            overflow: hidden;
-            z-index: -1;
-        ">
-            {stars_html}
-        </div>
-    """, unsafe_allow_html=True)
+    st.markdown(stars_html, unsafe_allow_html=True)
 
 # ==========================
-# TAMPILKAN BINTANG DI SEMUA HALAMAN
+# TAMPILKAN BINTANG
 # ==========================
 draw_stars(100)
 
@@ -80,7 +70,7 @@ draw_stars(100)
 # ==========================
 if st.session_state.page == "main":
     header("🪐 SpaceVision AI", "Jelajahi dunia kecerdasan buatan di galaksi luar angkasa 🚀")
-    
+
     col1, col2, col3 = st.columns([1, 1, 1])
     with col1:
         st.empty()
