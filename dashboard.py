@@ -6,8 +6,7 @@ import random
 # ==========================
 st.set_page_config(page_title="SpaceVision AI", page_icon="🪐", layout="wide")
 
-PRIMARY_COLOR = "#3b82f6"
-BG_COLOR = "#0b0f2e"
+BG_COLOR = "#05091a"     # Lebih gelap agar bintang kontras
 TEXT_COLOR = "#ffffff"
 
 # Gaya dasar halaman
@@ -21,9 +20,9 @@ st.markdown(f"""
         [data-testid="stHeader"] {{background: rgba(0,0,0,0);}}
         [data-testid="stToolbar"] {{right: 2rem;}}
         @keyframes twinkle {{
-            0% {{opacity: 0.2; transform: scale(1);}}
-            50% {{opacity: 1; transform: scale(1.3);}}
-            100% {{opacity: 0.2; transform: scale(1);}}
+            0% {{opacity: 0.3; transform: scale(1);}}
+            50% {{opacity: 1; transform: scale(1.4);}}
+            100% {{opacity: 0.3; transform: scale(1);}}
         }}
     </style>
 """, unsafe_allow_html=True)
@@ -43,25 +42,20 @@ def header(title, subtitle=""):
 
 
 # ==========================
-# BINTANG (LEBIH PADAT)
+# BINTANG FULL LAYAR
 # ==========================
-def draw_stars(num_stars=250):
-    """
-    Bintang memenuhi area atas, bawah, kiri, dan kanan
-    tanpa menutupi konten utama di tengah.
-    """
+def draw_stars(num_stars=400):
+    """Bintang penuh layar dengan warna & ukuran bervariasi"""
+    star_colors = ["#FFD700", "#FFF8DC", "#B0E0E6", "#F0E68C", "#FFFFFF"]
     stars_html = ""
+
     for _ in range(num_stars):
         left = random.randint(0, 100)
         top = random.randint(0, 100)
-
-        # Hindari area tengah utama (agar teks tetap bersih)
-        if 30 < left < 70 and 25 < top < 75:
-            continue
-
-        size = random.randint(5, 15)
-        opacity = random.uniform(0.3, 0.9)
-        duration = random.uniform(1.5, 3.5)
+        size = random.randint(4, 14)
+        opacity = random.uniform(0.3, 1)
+        duration = random.uniform(1.5, 4)
+        color = random.choice(star_colors)
 
         stars_html += f"""
             <div style="
@@ -69,13 +63,14 @@ def draw_stars(num_stars=250):
                 left: {left}%;
                 top: {top}%;
                 font-size: {size}px;
-                color: gold;
+                color: {color};
                 opacity: {opacity};
                 z-index: 0;
                 pointer-events: none;
                 animation: twinkle {duration}s infinite ease-in-out;
             ">⭐</div>
         """
+
     st.markdown(stars_html, unsafe_allow_html=True)
 
 
@@ -83,7 +78,7 @@ def draw_stars(num_stars=250):
 # HALAMAN UTAMA
 # ==========================
 if st.session_state.page == "main":
-    draw_stars(num_stars=250)
+    draw_stars(num_stars=400)
     header("🪐 SpaceVision AI", "Jelajahi dunia kecerdasan buatan di galaksi luar angkasa 🚀")
 
     col1, col2, col3 = st.columns([1, 1, 1])
@@ -101,7 +96,7 @@ if st.session_state.page == "main":
 # HALAMAN KLASIFIKASI
 # ==========================
 elif st.session_state.page == "classify":
-    draw_stars(num_stars=250)
+    draw_stars(num_stars=400)
     header("🧠 Klasifikasi Gambar", "Unggah gambar untuk diidentifikasi model AI kamu")
 
     uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
@@ -117,7 +112,7 @@ elif st.session_state.page == "classify":
 # HALAMAN DETEKSI
 # ==========================
 elif st.session_state.page == "detect":
-    draw_stars(num_stars=250)
+    draw_stars(num_stars=400)
     header("🛰️ Deteksi Objek", "Unggah gambar untuk melakukan deteksi objek menggunakan model YOLO")
 
     uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
