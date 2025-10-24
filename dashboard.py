@@ -95,7 +95,7 @@ header("🪐 SpaceVision AI", "Jelajahi dunia kecerdasan buatan di galaksi luar 
 ```
 col1, col2, col3 = st.columns([1, 1, 1])
 with col2:
-    st.markdown("<h3 style='text-align:center; color:#3b82f6;'>Pilih Misi Kamu:</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align:center; color:#ffffff;'>Pilih Misi Kamu:</h3>", unsafe_allow_html=True)
     st.write("")
     if st.button("🧠 Klasifikasi Gambar", use_container_width=True):
         st.session_state.page = "classify"
