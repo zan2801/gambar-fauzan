@@ -132,10 +132,20 @@ elif st.session_state.page == "classify":
             img_array = np.expand_dims(img_array, axis=0)
             img_array = img_array / 255.0
 
+            # Prediksi
             prediction = classifier.predict(img_array)
             class_index = np.argmax(prediction)
-            st.success(f"Hasil Prediksi: {class_index}")
-            st.write("Probabilitas:", float(np.max(prediction)))
+
+            # Mapping label
+            label_map = {
+                0: "Tumor Otak",
+                1: "Otak Sehat"
+            }
+
+            class_label = label_map.get(class_index, "Tidak Dikenal")
+
+            st.success(f"Hasil Prediksi: {class_label}")
+            st.write("Probabilitas:", f"{np.max(prediction):.4f}")
         except Exception as e:
             st.error(f"Terjadi kesalahan saat klasifikasi: {e}")
 
@@ -143,7 +153,6 @@ elif st.session_state.page == "classify":
     if st.button("⬅️ Kembali ke Halaman Utama"):
         st.session_state.page = "main"
         st.rerun()
-
 
 
 # ==========================
