@@ -122,7 +122,7 @@ yolo_model, classifier = load_models()
 # ==========================
 if st.session_state.page == "main":
     draw_stars_and_satellites()
-    header("🚀 Klasifikasi & Deteksi Objek", "Unggah gambar dan biarkan AI menjelajahinya di antara bintang-bintang 🌌")
+    header("Klasifikasi & Deteksi Objek", "Klasifikasikan dan deteksi objek dengan mudah, cepat, dan akurat💫")
 
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
@@ -140,7 +140,7 @@ if st.session_state.page == "main":
 # ==========================
 elif st.session_state.page == "classify":
     draw_stars_and_satellites()
-    header("🌑 Klasifikasi Gambar", "Unggah gambar untuk diidentifikasi model AI kamu")
+    header("🌑 Klasifikasi Gambar", "Unggah gambar untuk melakukan klasifikasi")
 
     uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
 
@@ -176,7 +176,7 @@ elif st.session_state.page == "classify":
 # ==========================
 elif st.session_state.page == "detect":
     draw_stars_and_satellites()
-    header("🪐 Deteksi Objek", "Unggah gambar untuk melakukan deteksi objek menggunakan model YOLO")
+    header("🪐 Deteksi Objek", "Unggah gambar untuk melakukan deteksi objek")
 
     uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
 
