@@ -6,7 +6,7 @@ import random
 # ==========================
 st.set_page_config(page_title="SpaceVision AI", page_icon="🪐", layout="wide")
 
-BG_COLOR = "#0b0f2e"     # Lebih gelap agar bintang kontras
+BG_COLOR = "#05091a"     # Lebih gelap agar bintang kontras
 TEXT_COLOR = "#ffffff"
 TEXT_JUGA =  "#2F4F4F"
 
