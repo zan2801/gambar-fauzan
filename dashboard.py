@@ -56,7 +56,7 @@ def header(title, subtitle=""):
 # ==========================
 # BINTANG & SATELIT
 # ==========================
-def draw_stars_and_satellites(num_stars=370, num_satellites=6):
+def draw_stars_and_satellites(num_stars=370, num_satellites=8):
     """Bintang penuh layar + animasi satelit di belakang gambar"""
     star_colors = ["#FFD700", "#FFF8DC", "#B0E0E6", "#F0E68C", "#FFFFFF"]
     html = ""
@@ -88,7 +88,7 @@ def draw_stars_and_satellites(num_stars=370, num_satellites=6):
     for _ in range(num_satellites):
         left = random.randint(0, 100)
         top = random.randint(0, 100)
-        size = random.randint(40, 70)
+        size = random.randint(60, 105)
         duration = random.uniform(6, 12)
         html += f"""
             <div style="
