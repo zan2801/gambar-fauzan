@@ -7,85 +7,71 @@ import random
 st.set_page_config(page_title="SpaceVision AI", layout="centered")
 
 # ===============================
-# FUNGSI LATAR BELAKANG BINTANG
+# CSS + GAYA GLOBAL
 # ===============================
-def draw_stars(num_stars=120):
-    """Buat layer bintang di latar belakang (tidak menutupi elemen utama)."""
-    stars_html = """
-    <div style="
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        overflow: hidden;
-        z-index: 0;
-        pointer-events: none;
-    ">
-    """
+st.markdown("""
+    <style>
+    body {
+        background-color: #03091E;
+        color: white;
+    }
+    .main {
+        background-color: transparent;
+    }
+    h1, h2, h3, p {
+        text-align: center;
+        color: white;
+    }
+    @keyframes twinkle {
+        0% { opacity: 0.2; }
+        50% { opacity: 1; }
+        100% { opacity: 0.2; }
+    }
+    .stButton button {
+        display: block;
+        margin: 10px auto;
+        width: 250px;
+        background-color: #0B1E42;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        padding: 12px;
+        font-size: 18px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+    .stButton button:hover {
+        background-color: #1A3B73;
+        transform: scale(1.05);
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# ===============================
+# FUNGSI BINTANG
+# ===============================
+def draw_stars(num_stars=100):
+    """Render bintang di background (HTML utuh agar tidak tampil sebagai teks)."""
+    stars_html = "<html><body><div style='position:fixed; width:100%; height:100%; top:0; left:0; z-index:0; overflow:hidden; pointer-events:none;'>"
     for _ in range(num_stars):
         left = random.randint(0, 100)
         top = random.randint(0, 100)
         size = random.randint(6, 14)
         opacity = random.uniform(0.3, 0.8)
+        duration = random.uniform(1.5, 3.0)
         stars_html += f"""
         <span style="
-            position: absolute;
-            left: {left}%;
-            top: {top}%;
-            font-size: {size}px;
-            color: gold;
-            opacity: {opacity};
-            animation: twinkle {random.uniform(1.5, 3)}s infinite ease-in-out;
+            position:absolute;
+            left:{left}%;
+            top:{top}%;
+            font-size:{size}px;
+            color:gold;
+            opacity:{opacity};
+            animation:twinkle {duration}s infinite ease-in-out;
         ">⭐</span>
         """
-    stars_html += "</div>"
-
-    st.markdown(stars_html, unsafe_allow_html=True)
-
-
-# ===============================
-# FUNGSI GAYA GLOBAL
-# ===============================
-def set_style():
-    st.markdown("""
-        <style>
-        body {
-            background-color: #03091E;
-            color: white;
-        }
-        .main {
-            background-color: transparent;
-        }
-        h1, h2, h3, p {
-            text-align: center;
-            color: white;
-        }
-        @keyframes twinkle {
-            0% { opacity: 0.3; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
-        }
-        .stButton button {
-            display: block;
-            margin: 10px auto;
-            width: 250px;
-            background-color: #0B1E42;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 12px;
-            font-size: 18px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        .stButton button:hover {
-            background-color: #1A3B73;
-            transform: scale(1.05);
-        }
-        </style>
-    """, unsafe_allow_html=True)
-
+    stars_html += "</div></body></html>"
+    st.components.v1.html(stars_html, height=0, width=0)
 
 # ===============================
 # HALAMAN
@@ -118,14 +104,12 @@ def deteksi_page():
         st.session_state.page = "utama"
         st.rerun()
 
-
 # ===============================
 # SISTEM NAVIGASI
 # ===============================
 if "page" not in st.session_state:
     st.session_state.page = "utama"
 
-set_style()
 draw_stars(120)
 
 if st.session_state.page == "utama":
