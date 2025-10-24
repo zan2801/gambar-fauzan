@@ -19,6 +19,11 @@ st.markdown(f"""
         }}
         [data-testid="stHeader"] {{background: rgba(0,0,0,0);}}
         [data-testid="stToolbar"] {{right: 2rem;}}
+        @keyframes twinkle {{
+            0% {{opacity: 0.2;}}
+            50% {{opacity: 1;}}
+            100% {{opacity: 0.2;}}
+        }}
     </style>
 """, unsafe_allow_html=True)
 
@@ -37,21 +42,22 @@ def header(title, subtitle=""):
 
 
 # ==========================
-# BINTANG (dengan zona aman)
+# BINTANG (DIPINDAH KE SAMPING)
 # ==========================
-def draw_stars(num_stars=120, safe_zone=(30, 70, 35, 65)):
-    """safe_zone = (left_min, left_max, top_min, top_max)"""
+def draw_stars(num_stars=120):
+    """Bintang di sisi kiri dan kanan layar, tidak menutupi konten tengah."""
     stars_html = ""
     for _ in range(num_stars):
         left = random.randint(0, 100)
         top = random.randint(0, 100)
 
-        # Hindari zona aman
-        if safe_zone[0] < left < safe_zone[1] and safe_zone[2] < top < safe_zone[3]:
+        # Hanya tampilkan di sisi kiri (<25%) dan kanan (>75%)
+        if 25 < left < 75:
             continue
 
-        size = random.randint(8, 18)
-        opacity = random.uniform(0.3, 0.9)
+        size = random.randint(6, 14)
+        opacity = random.uniform(0.3, 0.8)
+        duration = random.uniform(1.5, 3.5)
 
         stars_html += f"""
             <div style="
@@ -61,8 +67,9 @@ def draw_stars(num_stars=120, safe_zone=(30, 70, 35, 65)):
                 font-size: {size}px;
                 color: gold;
                 opacity: {opacity};
-                z-index: 1;
+                z-index: 0;
                 pointer-events: none;
+                animation: twinkle {duration}s infinite ease-in-out;
             ">⭐</div>
         """
     st.markdown(stars_html, unsafe_allow_html=True)
@@ -72,7 +79,7 @@ def draw_stars(num_stars=120, safe_zone=(30, 70, 35, 65)):
 # HALAMAN UTAMA
 # ==========================
 if st.session_state.page == "main":
-    draw_stars(num_stars=150, safe_zone=(28, 72, 30, 70))
+    draw_stars(num_stars=160)
     header("🪐 SpaceVision AI", "Jelajahi dunia kecerdasan buatan di galaksi luar angkasa 🚀")
 
     col1, col2, col3 = st.columns([1, 1, 1])
@@ -90,7 +97,7 @@ if st.session_state.page == "main":
 # HALAMAN KLASIFIKASI
 # ==========================
 elif st.session_state.page == "classify":
-    draw_stars(num_stars=150, safe_zone=(20, 80, 20, 80))
+    draw_stars(num_stars=160)
     header("🧠 Klasifikasi Gambar", "Unggah gambar untuk diidentifikasi model AI kamu")
 
     uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
@@ -106,7 +113,7 @@ elif st.session_state.page == "classify":
 # HALAMAN DETEKSI
 # ==========================
 elif st.session_state.page == "detect":
-    draw_stars(num_stars=150, safe_zone=(20, 80, 20, 80))
+    draw_stars(num_stars=160)
     header("🛰️ Deteksi Objek", "Unggah gambar untuk melakukan deteksi objek menggunakan model YOLO")
 
     uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
