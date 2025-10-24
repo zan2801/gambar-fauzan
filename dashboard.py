@@ -54,10 +54,10 @@ def header(title, subtitle=""):
     st.write("")
 
 # ==========================
-# BINTANG & SATELIT (SATU SAJA)
+# BINTANG & SATELIT
 # ==========================
-def draw_stars_and_satellites(num_stars=400):
-    """Bintang penuh layar + 1 satelit besar di kanan atas"""
+def draw_stars_and_satellites(num_stars=400, num_satellites=6):
+    """Bintang penuh layar + animasi satelit"""
     star_colors = ["#FFD700", "#FFF8DC", "#B0E0E6", "#F0E68C", "#FFFFFF"]
     html = ""
 
@@ -84,20 +84,25 @@ def draw_stars_and_satellites(num_stars=400):
             ">⭐</div>
         """
 
-    # Tambah satu satelit besar di kanan atas
-    html += """
-        <div style="
-            position: fixed;
-            top: 60px;
-            right: 80px;
-            font-size: 120px;
-            color: #d0d0d0;
-            opacity: 0.9;
-            z-index: 2;
-            pointer-events: none;
-            animation: satelliteMove 6s infinite ease-in-out alternate;
-        ">🛰️</div>
-    """
+    # Tambah satelit animasi
+    for _ in range(num_satellites):
+        left = random.randint(0, 100)
+        top = random.randint(0, 100)
+        size = random.randint(60, 100)
+        duration = random.uniform(6, 12)
+        html += f"""
+            <div style="
+                position: fixed;
+                left: {left}%;
+                top: {top}%;
+                font-size: {size}px;
+                color: #d0d0d0;
+                opacity: 0.8;
+                z-index: 1;
+                pointer-events: none;
+                animation: satelliteMove {duration}s infinite ease-in-out alternate;
+            ">🛰️</div>
+        """
 
     st.markdown(html, unsafe_allow_html=True)
 
