@@ -56,7 +56,7 @@ def header(title, subtitle=""):
 # ==========================
 # BINTANG & SATELIT
 # ==========================
-def draw_stars_and_satellites(num_stars=350, num_satellites=8):
+def draw_stars_and_satellites(num_stars=370, num_satellites=6):
     """Bintang penuh layar + animasi satelit"""
     star_colors = ["#FFD700", "#FFF8DC", "#B0E0E6", "#F0E68C", "#FFFFFF"]
     html = ""
