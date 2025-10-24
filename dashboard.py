@@ -1,81 +1,48 @@
 import streamlit as st
-from ultralytics import YOLO
-import tensorflow as tf
+import random
+from PIL import Image
 from tensorflow.keras.preprocessing import image
 import numpy as np
-from PIL import Image
-import random
+from ultralytics import YOLO
+import tensorflow as tf
 
 # ==========================
 # KONFIGURASI HALAMAN
 # ==========================
 st.set_page_config(page_title="SpaceVision AI", page_icon="🪐", layout="wide")
 
-BG_COLOR = "#05091a"
+BG_COLOR = "#05091a"     # Lebih gelap agar bintang kontras
 TEXT_COLOR = "#ffffff"
-TEXT_SUB = "#708090"
-TITLE_MODE_COLOR = "#00BFFF"
+TEXT_JUGA = "#708090"
 
-# Styling dasar + animasi bintang
+# Gaya dasar halaman
 st.markdown(f"""
     <style>
         [data-testid="stAppViewContainer"] {{
             background-color: {BG_COLOR} !important;
-            color: {TEXT_SUB};
+            color: {TEXT_JUGA};
             overflow: hidden;
         }}
-        [data-testid="stHeader"], [data-testid="stToolbar"] {{
-            background: rgba(0,0,0,0);
-        }}
+        [data-testid="stHeader"] {{background: rgba(0,0,0,0);}}
+        [data-testid="stToolbar"] {{right: 2rem;}}
         @keyframes twinkle {{
-            0% {{ opacity: 0.3; transform: scale(1); }}
-            50% {{ opacity: 1; transform: scale(1.3); }}
-            100% {{ opacity: 0.3; transform: scale(1); }}
+            0% {{opacity: 0.3; transform: scale(1);}}
+            50% {{opacity: 1; transform: scale(1.4);}}
+            100% {{opacity: 0.3; transform: scale(1);}}
+        }}
+        @keyframes satelliteMove {{
+            0%   {{ transform: translateX(0) translateY(0) rotate(0deg); opacity: 0.6; }}
+            50%  {{ transform: translateX(30px) translateY(-15px) rotate(20deg); opacity: 1; }}
+            100% {{ transform: translateX(60px) translateY(0) rotate(-10deg); opacity: 0.6; }}
         }}
     </style>
 """, unsafe_allow_html=True)
 
-
 # ==========================
-# BINTANG LATAR
-# ==========================
-def draw_stars(num_stars=400):
-    star_colors = ["#FFD700", "#FFF8DC", "#B0E0E6", "#F0E68C", "#FFFFFF"]
-    stars_html = "<div style='position:fixed; inset:0; z-index:0; pointer-events:none;'>"
-    for _ in range(num_stars):
-        left = random.uniform(0, 100)
-        top = random.uniform(0, 100)
-        size = random.randint(4, 14)
-        opacity = round(random.uniform(0.25, 0.95), 2)
-        duration = round(random.uniform(1.8, 4.0), 2)
-        color = random.choice(star_colors)
-        stars_html += (
-            f"<div style='position:absolute; left:{left}%; top:{top}%; "
-            f"font-size:{size}px; color:{color}; opacity:{opacity}; "
-            f"animation:twinkle {duration}s infinite ease-in-out;'>⭐</div>"
-        )
-    stars_html += "</div>"
-    st.markdown(stars_html, unsafe_allow_html=True)
-
-
-# ==========================
-# LOAD MODELS
-# ==========================
-@st.cache_resource
-def load_models():
-    yolo_model = YOLO("model/FauzanAkbar_Laporan4.pt")
-    classifier = tf.keras.models.load_model("model/Fauzan Akbar_Laporan 2.h5")
-    return yolo_model, classifier
-
-yolo_model, classifier = load_models()
-
-
-# ==========================
-# NAVIGASI
+# SIMPAN HALAMAN
 # ==========================
 if "page" not in st.session_state:
     st.session_state.page = "main"
-
 
 # ==========================
 # HEADER
@@ -86,17 +53,80 @@ def header(title, subtitle=""):
         st.markdown(f"<p style='text-align:center; color:{TEXT_COLOR}; font-size:18px;'>{subtitle}</p>", unsafe_allow_html=True)
     st.write("")
 
+# ==========================
+# BINTANG & SATELIT
+# ==========================
+def draw_stars_and_satellites(num_stars=400, num_satellites=6):
+    """Bintang penuh layar + animasi satelit"""
+    star_colors = ["#FFD700", "#FFF8DC", "#B0E0E6", "#F0E68C", "#FFFFFF"]
+    html = ""
+
+    # Tambah bintang
+    for _ in range(num_stars):
+        left = random.randint(0, 100)
+        top = random.randint(0, 100)
+        size = random.randint(4, 14)
+        opacity = random.uniform(0.3, 1)
+        duration = random.uniform(1.5, 4)
+        color = random.choice(star_colors)
+
+        html += f"""
+            <div style="
+                position: fixed;
+                left: {left}%;
+                top: {top}%;
+                font-size: {size}px;
+                color: {color};
+                opacity: {opacity};
+                z-index: 0;
+                pointer-events: none;
+                animation: twinkle {duration}s infinite ease-in-out;
+            ">⭐</div>
+        """
+
+    # Tambah satelit animasi
+    for _ in range(num_satellites):
+        left = random.randint(0, 100)
+        top = random.randint(0, 100)
+        size = random.randint(20, 30)
+        duration = random.uniform(6, 12)
+        html += f"""
+            <div style="
+                position: fixed;
+                left: {left}%;
+                top: {top}%;
+                font-size: {size}px;
+                color: #d0d0d0;
+                opacity: 0.8;
+                z-index: 1;
+                pointer-events: none;
+                animation: satelliteMove {duration}s infinite ease-in-out alternate;
+            ">🛰️</div>
+        """
+
+    st.markdown(html, unsafe_allow_html=True)
+
+# ==========================
+# LOAD MODEL
+# ==========================
+@st.cache_resource
+def load_models():
+    yolo_model = YOLO("model/FauzanAkbar_Laporan4.pt")
+    classifier = tf.keras.models.load_model("model/Fauzan Akbar_Laporan 2.h5")
+    return yolo_model, classifier
+
+yolo_model, classifier = load_models()
 
 # ==========================
 # HALAMAN UTAMA
 # ==========================
 if st.session_state.page == "main":
-    draw_stars()
+    draw_stars_and_satellites()
     header("🪐 SpaceVision AI", "Jelajahi dunia kecerdasan buatan di galaksi luar angkasa 🚀")
 
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
-        st.markdown(f"<h3 style='text-align:center; color:{TITLE_MODE_COLOR};'>Pilih Misi Kamu:</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align:center; color:#FFD700;'>Pilih Misi Kamu:</h3>", unsafe_allow_html=True)
         st.write("")
         if st.button("🧠 Klasifikasi Gambar", use_container_width=True):
             st.session_state.page = "classify"
@@ -105,43 +135,31 @@ if st.session_state.page == "main":
             st.session_state.page = "detect"
             st.rerun()
 
-
 # ==========================
 # HALAMAN KLASIFIKASI
 # ==========================
 elif st.session_state.page == "classify":
-    draw_stars(num_stars=400)
+    draw_stars_and_satellites()
     header("🧠 Klasifikasi Gambar", "Unggah gambar untuk diidentifikasi model AI kamu")
 
     uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
 
     if uploaded_file:
         img = Image.open(uploaded_file)
-
-        # Pastikan gambar 3 channel (RGB)
         if img.mode != "RGB":
             img = img.convert("RGB")
-
         st.image(img, caption="Gambar yang diunggah", use_container_width=True)
 
         try:
-            # Sesuaikan ukuran input model
             input_shape = classifier.input_shape[1:3]
             img_resized = img.resize(input_shape)
             img_array = image.img_to_array(img_resized)
-            img_array = np.expand_dims(img_array, axis=0)
-            img_array = img_array / 255.0
+            img_array = np.expand_dims(img_array, axis=0) / 255.0
 
-            # Prediksi
             prediction = classifier.predict(img_array)
             class_index = np.argmax(prediction)
 
-            # Mapping label
-            label_map = {
-                0: "Tumor Otak",
-                1: "Otak Sehat"
-            }
-
+            label_map = {0: "Tumor Otak", 1: "Otak Sehat"}
             class_label = label_map.get(class_index, "Tidak Dikenal")
 
             st.success(f"Hasil Prediksi: {class_label}")
@@ -149,32 +167,28 @@ elif st.session_state.page == "classify":
         except Exception as e:
             st.error(f"Terjadi kesalahan saat klasifikasi: {e}")
 
-    st.write("")
     if st.button("⬅️ Kembali ke Halaman Utama"):
         st.session_state.page = "main"
         st.rerun()
-
 
 # ==========================
 # HALAMAN DETEKSI
 # ==========================
 elif st.session_state.page == "detect":
-    draw_stars()
-    header("🛰️ Deteksi Objek", "Unggah gambar untuk mendeteksi objek menggunakan YOLO")
+    draw_stars_and_satellites()
+    header("🛰️ Deteksi Objek", "Unggah gambar untuk melakukan deteksi objek menggunakan model YOLO")
 
     uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
+
     if uploaded_file:
         img = Image.open(uploaded_file)
         st.image(img, caption="Gambar yang diunggah", use_container_width=True)
 
-        try:
-            results = yolo_model(img)
-            result_img = results[0].plot()
-            st.image(result_img, caption="Hasil Deteksi", use_container_width=True)
-        except Exception as e:
-            st.error(f"Gagal melakukan deteksi: {e}")
+        results = yolo_model(img)
+        result_img = results[0].plot()
 
-    st.write("")
+        st.image(result_img, caption="Hasil Deteksi", use_container_width=True)
+
     if st.button("⬅️ Kembali ke Halaman Utama"):
         st.session_state.page = "main"
         st.rerun()
