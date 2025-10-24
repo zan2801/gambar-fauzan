@@ -1,133 +1,140 @@
 import streamlit as st
 import random
 
-# ==========================
+# ===============================
 # KONFIGURASI HALAMAN
-# ==========================
-st.set_page_config(page_title="SpaceVision AI", page_icon="🪐", layout="wide")
+# ===============================
+st.set_page_config(page_title="SpaceVision AI", layout="centered")
 
-# Warna tema
-PRIMARY_COLOR = "#3b82f6"
-BG_COLOR = "#0b0f2e"
-TEXT_COLOR = "#ffffff"
-
-# ==========================
-# GAYA GLOBAL
-# ==========================
-st.markdown(f"""
-    <style>
-        /* Latar belakang utama */
-        [data-testid="stAppViewContainer"] {{
-            background-color: {BG_COLOR} !important;
-            color: {TEXT_COLOR};
-        }}
-        [data-testid="stHeader"] {{background: rgba(0,0,0,0);}}
-        [data-testid="stToolbar"] {{right: 2rem;}}
-        
-        /* Pastikan konten di atas layer bintang */
-        [data-testid="stAppViewContainer"] > div:first-child {{
-            position: relative;
-            z-index: 2;
-        }}
-    </style>
-""", unsafe_allow_html=True)
-
-# ==========================
-# FUNGSI BINTANG
-# ==========================
-def draw_stars(num_stars=120):
-    """Buat latar belakang bintang di layer paling belakang."""
+# ===============================
+# FUNGSI LATAR BELAKANG BINTANG
+# ===============================
+def draw_stars(num_stars=100):
+    """Buat latar belakang bintang di layer belakang"""
     stars_html = """
-        <div style="
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            overflow: hidden;
-            z-index: 0;
-        ">
+    <div style="
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        overflow: hidden;
+        z-index: 0;
+    ">
     """
     for _ in range(num_stars):
         left = random.randint(0, 100)
         top = random.randint(0, 100)
-        size = random.randint(6, 16)
+        size = random.randint(6, 14)
         opacity = random.uniform(0.3, 0.9)
         stars_html += f"""
-            <div style="
-                position: absolute;
-                left: {left}%;
-                top: {top}%;
-                font-size: {size}px;
-                color: gold;
-                opacity: {opacity};
-                pointer-events: none;
-            ">⭐</div>
+        <span style="
+            position: absolute;
+            left: {left}%;
+            top: {top}%;
+            font-size: {size}px;
+            color: gold;
+            opacity: {opacity};
+            pointer-events: none;
+        ">⭐</span>
         """
     stars_html += "</div>"
     st.markdown(stars_html, unsafe_allow_html=True)
 
-# ==========================
-# SIMPAN STATUS HALAMAN
-# ==========================
-if "page" not in st.session_state:
-    st.session_state.page = "main"
 
-# ==========================
-# FUNGSI HEADER
-# ==========================
-def header(title, subtitle=""):
-    st.markdown(f"<h1 style='text-align:center; color:{TEXT_COLOR};'>{title}</h1>", unsafe_allow_html=True)
-    if subtitle:
-        st.markdown(f"<p style='text-align:center; color:{TEXT_COLOR}; font-size:18px;'>{subtitle}</p>", unsafe_allow_html=True)
-    st.write("")
+# ===============================
+# FUNGSI GAYA UTAMA
+# ===============================
+def set_background():
+    st.markdown(
+        """
+        <style>
+        body {
+            background-color: #03091E;
+            color: white;
+        }
+        .main {
+            background-color: transparent;
+        }
+        h1, h2, h3 {
+            text-align: center;
+            color: white;
+        }
+        .space-button {
+            display: block;
+            width: 300px;
+            margin: 20px auto;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 15px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: #0B1E42;
+            color: white;
+        }
+        .space-button:hover {
+            background-color: #1A3B73;
+            transform: scale(1.05);
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+        span {
+            animation: twinkle 2s infinite ease-in-out;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
-# ==========================
-# HALAMAN UTAMA
-# ==========================
-if st.session_state.page == "main":
-    draw_stars()
-    header("🪐 SpaceVision AI", "Jelajahi dunia kecerdasan buatan di galaksi luar angkasa 🚀")
 
-    col1, col2, col3 = st.columns([1, 1, 1])
+# ===============================
+# FUNGSI HALAMAN
+# ===============================
+def main_page():
+    st.markdown("<h1>🪐 SpaceVision AI</h1>", unsafe_allow_html=True)
+    st.markdown("<h3>Jelajahi dunia kecerdasan buatan di galaksi luar angkasa 🚀</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align:center; margin-top:40px;'>Pilih Misi Kamu:</h3>", unsafe_allow_html=True)
+
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("🧠 Klasifikasi Gambar", key="classify", use_container_width=True):
+            st.session_state.page = "klasifikasi"
     with col2:
-        st.write("### Pilih Misi Kamu:")
-        st.write("")
-        if st.button("🧠 Klasifikasi Gambar", use_container_width=True):
-            st.session_state.page = "classify"
-            st.rerun()
-        if st.button("🛰️ Deteksi Objek", use_container_width=True):
-            st.session_state.page = "detect"
-            st.rerun()
+        if st.button("🛰️ Deteksi Objek", key="detect", use_container_width=True):
+            st.session_state.page = "deteksi"
 
-# ==========================
-# HALAMAN KLASIFIKASI
-# ==========================
-elif st.session_state.page == "classify":
-    draw_stars()
-    header("🧠 Klasifikasi Gambar", "Unggah gambar untuk diidentifikasi model AI kamu")
 
-    uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
-    if uploaded_file:
-        st.image(uploaded_file, caption="Gambar yang diunggah", use_column_width=True)
+def klasifikasi_page():
+    st.markdown("<h1>🧠 Misi Klasifikasi Gambar</h1>", unsafe_allow_html=True)
+    st.write("Unggah gambar untuk mengenali objek di dalamnya.")
+    if st.button("⬅️ Kembali ke Beranda"):
+        st.session_state.page = "utama"
 
-    st.write("")
-    if st.button("⬅️ Kembali ke Halaman Utama"):
-        st.session_state.page = "main"
-        st.rerun()
 
-# ==========================
-# HALAMAN DETEKSI
-# ==========================
-elif st.session_state.page == "detect":
-    draw_stars()
-    header("🛰️ Deteksi Objek", "Unggah gambar untuk melakukan deteksi objek menggunakan model YOLO")
+def deteksi_page():
+    st.markdown("<h1>🛰️ Misi Deteksi Objek</h1>", unsafe_allow_html=True)
+    st.write("Unggah gambar untuk mendeteksi objek di dalamnya.")
+    if st.button("⬅️ Kembali ke Beranda"):
+        st.session_state.page = "utama"
 
-    uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
-    if uploaded_file:
-        st.image(uploaded_file, caption="Gambar yang diunggah", use_column_width=True)
 
-    st.write("")
-    if st.button("⬅️ Kembali ke Halaman Utama"):
-        st.session_state.page = "main"
-        st.rerun()
+# ===============================
+# SISTEM NAVIGASI
+# ===============================
+if "page" not in st.session_state:
+    st.session_state.page = "utama"
+
+set_background()
+draw_stars(120)
+
+if st.session_state.page == "utama":
+    main_page()
+elif st.session_state.page == "klasifikasi":
+    klasifikasi_page()
+elif st.session_state.page == "deteksi":
+    deteksi_page()
