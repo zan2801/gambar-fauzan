@@ -110,21 +110,22 @@ if st.session_state.page == "main":
 # HALAMAN KLASIFIKASI
 # ==========================
 elif st.session_state.page == "classify":
-    draw_stars()
-    header("🧠 Klasifikasi Gambar", "Unggah gambar untuk diidentifikasi oleh model AI kamu")
+    draw_stars(num_stars=400)
+    header("🧠 Klasifikasi Gambar", "Unggah gambar untuk diidentifikasi model AI kamu")
 
     uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
-        if uploaded_file:
+
+    if uploaded_file:
         img = Image.open(uploaded_file)
 
-        # pastikan gambar punya 3 channel
+        # Pastikan gambar 3 channel (RGB)
         if img.mode != "RGB":
             img = img.convert("RGB")
 
         st.image(img, caption="Gambar yang diunggah", use_container_width=True)
 
         try:
-            # otomatis sesuaikan ukuran input model
+            # Sesuaikan ukuran input model
             input_shape = classifier.input_shape[1:3]
             img_resized = img.resize(input_shape)
             img_array = image.img_to_array(img_resized)
@@ -137,6 +138,11 @@ elif st.session_state.page == "classify":
             st.write("Probabilitas:", float(np.max(prediction)))
         except Exception as e:
             st.error(f"Terjadi kesalahan saat klasifikasi: {e}")
+
+    st.write("")
+    if st.button("⬅️ Kembali ke Halaman Utama"):
+        st.session_state.page = "main"
+        st.rerun()
 
 
 
