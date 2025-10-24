@@ -9,9 +9,9 @@ import tensorflow as tf
 # ==========================
 # KONFIGURASI HALAMAN
 # ==========================
-st.set_page_config(page_title="SpaceVision AI", page_icon="🪐", layout="wide")
+st.set_page_config(page_title="Klasifikasi & Deteksi Objek", page_icon="🚀", layout="wide")
 
-BG_COLOR = "#05091a"     # Lebih gelap agar bintang kontras
+BG_COLOR = "#05091a"     
 TEXT_COLOR = "#ffffff"
 TEXT_JUGA = "#708090"
 
@@ -122,16 +122,16 @@ yolo_model, classifier = load_models()
 # ==========================
 if st.session_state.page == "main":
     draw_stars_and_satellites()
-    header("🪐 SpaceVision AI", "Jelajahi dunia kecerdasan buatan di galaksi luar angkasa 🚀")
+    header("🚀 Klasifikasi & Deteksi Objek", "Unggah gambar dan biarkan AI menjelajahinya di antara bintang-bintang 🌌")
 
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
-        st.markdown("<h3 style='text-align:center; color:#FFD700;'>Pilih Misi Kamu:</h3>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align:center; color:#FFD700;'>🚀Pilih Misi Kamu:</h3>", unsafe_allow_html=True)
         st.write("")
-        if st.button("🧠 Klasifikasi Gambar", use_container_width=True):
+        if st.button("🌑 Klasifikasi Gambar", use_container_width=True):
             st.session_state.page = "classify"
             st.rerun()
-        if st.button("🛰️ Deteksi Objek", use_container_width=True):
+        if st.button("🪐 Deteksi Objek", use_container_width=True):
             st.session_state.page = "detect"
             st.rerun()
 
@@ -140,7 +140,7 @@ if st.session_state.page == "main":
 # ==========================
 elif st.session_state.page == "classify":
     draw_stars_and_satellites()
-    header("🧠 Klasifikasi Gambar", "Unggah gambar untuk diidentifikasi model AI kamu")
+    header("🌑 Klasifikasi Gambar", "Unggah gambar untuk diidentifikasi model AI kamu")
 
     uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
 
@@ -176,7 +176,7 @@ elif st.session_state.page == "classify":
 # ==========================
 elif st.session_state.page == "detect":
     draw_stars_and_satellites()
-    header("🛰️ Deteksi Objek", "Unggah gambar untuk melakukan deteksi objek menggunakan model YOLO")
+    header("🪐 Deteksi Objek", "Unggah gambar untuk melakukan deteksi objek menggunakan model YOLO")
 
     uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
 
