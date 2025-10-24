@@ -78,7 +78,7 @@ def draw_stars_and_satellites(num_stars=370, num_satellites=6):
                 font-size: {size}px;
                 color: {color};
                 opacity: {opacity};
-                z-index: -2;
+                z-index: -1;
                 pointer-events: none;
                 animation: twinkle {duration}s infinite ease-in-out;
             ">⭐</div>
@@ -98,7 +98,7 @@ def draw_stars_and_satellites(num_stars=370, num_satellites=6):
                 font-size: {size}px;
                 color: #cfcfcf;
                 opacity: 0.7;
-                z-index: -1;
+                z-index: 0;
                 pointer-events: none;
                 animation: satelliteMove {duration}s infinite ease-in-out alternate;
             ">🛰️</div>
