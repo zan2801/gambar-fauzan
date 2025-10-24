@@ -114,8 +114,13 @@ elif st.session_state.page == "classify":
     header("🧠 Klasifikasi Gambar", "Unggah gambar untuk diidentifikasi oleh model AI kamu")
 
     uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
-    if uploaded_file:
+        if uploaded_file:
         img = Image.open(uploaded_file)
+
+        # pastikan gambar punya 3 channel
+        if img.mode != "RGB":
+            img = img.convert("RGB")
+
         st.image(img, caption="Gambar yang diunggah", use_container_width=True)
 
         try:
@@ -133,10 +138,6 @@ elif st.session_state.page == "classify":
         except Exception as e:
             st.error(f"Terjadi kesalahan saat klasifikasi: {e}")
 
-    st.write("")
-    if st.button("⬅️ Kembali ke Halaman Utama"):
-        st.session_state.page = "main"
-        st.rerun()
 
 
 # ==========================
