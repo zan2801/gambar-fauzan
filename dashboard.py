@@ -7,7 +7,8 @@ import random
 st.set_page_config(page_title="SpaceVision AI", page_icon="🪐", layout="wide")
 
 BG_COLOR = "#05091a"     # Lebih gelap agar bintang kontras
-TEXT_COLOR = "#778899"
+TEXT_COLOR = "#ffffff"
+TEXT_JUGA =  "#778899"
 
 # Gaya dasar halaman
 st.markdown(f"""
@@ -35,9 +36,9 @@ if "page" not in st.session_state:
 # HEADER
 # ==========================
 def header(title, subtitle=""):
-    st.markdown(f"<h1 style='text-align:center; color:{TEXT_COLOR};'>{title}</h1>", unsafe_allow_html=True)
+    st.markdown(f"<h1 style='text-align:center; color:{TEXT_JUGA};'>{title}</h1>", unsafe_allow_html=True)
     if subtitle:
-        st.markdown(f"<p style='text-align:center; color:{TEXT_COLOR}; font-size:18px;'>{subtitle}</p>", unsafe_allow_html=True)
+        st.markdown(f"<p style='text-align:center; color:{TEXT_JUGA}; font-size:18px;'>{subtitle}</p>", unsafe_allow_html=True)
     st.write("")
 
 
