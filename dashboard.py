@@ -1,126 +1,50 @@
 import streamlit as st
-import random
+from ultralytics import YOLO
+import tensorflow as tf
+from tensorflow.keras.preprocessing import image
+import numpy as np
+from PIL import Image
+import cv2
 
 # ==========================
-# KONFIGURASI HALAMAN
+# Load Models
 # ==========================
-st.set_page_config(page_title="SpaceVision AI", page_icon="🪐", layout="wide")
+@st.cache_resource
+def load_models():
+    yolo_model = YOLO("model/FauzanAkbar_Laporan4.pt")  # Model deteksi objek
+    classifier = tf.keras.models.load_model("model/Fauzan Akbar_Laporan 2.h5")  # Model klasifikasi
+    return yolo_model, classifier
 
-BG_COLOR = "#05091a"     # Lebih gelap agar bintang kontras
-TEXT_COLOR = "#ffffff"
-TEXT_JUGA =  "#708090"
-
-# Gaya dasar halaman
-st.markdown(f"""
-    <style>
-        [data-testid="stAppViewContainer"] {{
-            background-color: {BG_COLOR} !important;
-            color: {TEXT_JUGA};
-            overflow: hidden;
-        }}
-        [data-testid="stHeader"] {{background: rgba(0,0,0,0);}}
-        [data-testid="stToolbar"] {{right: 2rem;}}
-        @keyframes twinkle {{
-            0% {{opacity: 0.3; transform: scale(1);}}
-            50% {{opacity: 1; transform: scale(1.4);}}
-            100% {{opacity: 0.3; transform: scale(1);}}
-        }}
-    </style>
-""", unsafe_allow_html=True)
-
-# Simpan halaman
-if "page" not in st.session_state:
-    st.session_state.page = "main"
+yolo_model, classifier = load_models()
 
 # ==========================
-# HEADER
+# UI
 # ==========================
-def header(title, subtitle=""):
-    st.markdown(f"<h1 style='text-align:center; color:{TEXT_COLOR};'>{title}</h1>", unsafe_allow_html=True)
-    if subtitle:
-        st.markdown(f"<p style='text-align:center; color:{TEXT_COLOR}; font-size:18px;'>{subtitle}</p>", unsafe_allow_html=True)
-    st.write("")
+st.title("🧠 Image Classification & Object Detection App by Fauzan")
 
+menu = st.sidebar.selectbox("Pilih Mode:", ["Deteksi Objek (YOLO)", "Klasifikasi Gambar"])
 
-# ==========================
-# BINTANG FULL LAYAR
-# ==========================
-def draw_stars(num_stars=400):
-    """Bintang penuh layar dengan warna & ukuran bervariasi"""
-    star_colors = ["#FFD700", "#FFF8DC", "#B0E0E6", "#F0E68C", "#FFFFFF"]
-    stars_html = ""
+uploaded_file = st.file_uploader("Unggah Gambar", type=["jpg", "jpeg", "png"])
 
-    for _ in range(num_stars):
-        left = random.randint(0, 100)
-        top = random.randint(0, 100)
-        size = random.randint(4, 14)
-        opacity = random.uniform(0.3, 1)
-        duration = random.uniform(1.5, 4)
-        color = random.choice(star_colors)
+if uploaded_file is not None:
+    img = Image.open(uploaded_file)
+    st.image(img, caption="Gambar yang Diupload", use_container_width=True)
 
-        stars_html += f"""
-            <div style="
-                position: fixed;
-                left: {left}%;
-                top: {top}%;
-                font-size: {size}px;
-                color: {color};
-                opacity: {opacity};
-                z-index: 0;
-                pointer-events: none;
-                animation: twinkle {duration}s infinite ease-in-out;
-            ">⭐</div>
-        """
+    if menu == "Deteksi Objek (YOLO)":
+        # Deteksi objek
+        results = yolo_model(img)
+        result_img = results[0].plot()  # hasil deteksi (gambar dengan box)
+        st.image(result_img, caption="Hasil Deteksi", use_container_width=True)
 
-    st.markdown(stars_html, unsafe_allow_html=True)
+    elif menu == "Klasifikasi Gambar":
+        # Preprocessing
+        img_resized = img.resize((224, 224))  # sesuaikan ukuran dengan model kamu
+        img_array = image.img_to_array(img_resized)
+        img_array = np.expand_dims(img_array, axis=0)
+        img_array = img_array / 255.0
 
-
-# ==========================
-# HALAMAN UTAMA
-# ==========================
-if st.session_state.page == "main":
-    draw_stars(num_stars=400)
-    header("🪐 SpaceVision AI", "Jelajahi dunia kecerdasan buatan di galaksi luar angkasa 🚀")
-
-    col1, col2, col3 = st.columns([1, 1, 1])
-    with col2:
-        st.write("### Pilih Misi Kamu:")
-        st.write("")
-        if st.button("🧠 Klasifikasi Gambar", use_container_width=True):
-            st.session_state.page = "classify"
-            st.rerun()
-        if st.button("🛰️ Deteksi Objek", use_container_width=True):
-            st.session_state.page = "detect"
-            st.rerun()
-
-# ==========================
-# HALAMAN KLASIFIKASI
-# ==========================
-elif st.session_state.page == "classify":
-    draw_stars(num_stars=400)
-    header("🧠 Klasifikasi Gambar", "Unggah gambar untuk diidentifikasi model AI kamu")
-
-    uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
-    if uploaded_file:
-        st.image(uploaded_file, caption="Gambar yang diunggah", use_column_width=True)
-
-    st.write("")
-    if st.button("⬅️ Kembali ke Halaman Utama"):
-        st.session_state.page = "main"
-        st.rerun()
-
-# ==========================
-# HALAMAN DETEKSI
-# ==========================
-elif st.session_state.page == "detect":
-    draw_stars(num_stars=400)
-    header("🛰️ Deteksi Objek", "Unggah gambar untuk melakukan deteksi objek menggunakan model YOLO")
-
-    uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
-    if uploaded_file:
-        st.image(uploaded_file, caption="Gambar yang diunggah", use_column_width=True)
-
-    st.write("")
-    if st.button("⬅️ Kembali ke Halaman Utama"):
-        st.session_state.page = "main"
-        st.rerun()
+        # Prediksi
+        prediction = classifier.predict(img_array)
+        class_index = np.argmax(prediction)
+        st.write("### Hasil Prediksi:", class_index)
+        st.write("Probabilitas:", np.max(prediction))
