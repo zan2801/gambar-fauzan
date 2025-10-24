@@ -57,7 +57,7 @@ def header(title, subtitle=""):
 # BINTANG & SATELIT
 # ==========================
 def draw_stars_and_satellites(num_stars=370, num_satellites=6):
-    """Bintang penuh layar + animasi satelit"""
+    """Bintang penuh layar + animasi satelit di belakang gambar"""
     star_colors = ["#FFD700", "#FFF8DC", "#B0E0E6", "#F0E68C", "#FFFFFF"]
     html = ""
 
@@ -78,17 +78,17 @@ def draw_stars_and_satellites(num_stars=370, num_satellites=6):
                 font-size: {size}px;
                 color: {color};
                 opacity: {opacity};
-                z-index: 0;
+                z-index: -2;
                 pointer-events: none;
                 animation: twinkle {duration}s infinite ease-in-out;
             ">⭐</div>
         """
 
-    # Tambah satelit animasi
+    # Tambah beberapa satelit kecil di belakang gambar
     for _ in range(num_satellites):
         left = random.randint(0, 100)
         top = random.randint(0, 100)
-        size = random.randint(60, 100)
+        size = random.randint(40, 70)
         duration = random.uniform(6, 12)
         html += f"""
             <div style="
@@ -96,9 +96,9 @@ def draw_stars_and_satellites(num_stars=370, num_satellites=6):
                 left: {left}%;
                 top: {top}%;
                 font-size: {size}px;
-                color: #d0d0d0;
-                opacity: 0.8;
-                z-index: 1;
+                color: #cfcfcf;
+                opacity: 0.7;
+                z-index: -1;
                 pointer-events: none;
                 animation: satelliteMove {duration}s infinite ease-in-out alternate;
             ">🛰️</div>
