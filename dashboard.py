@@ -16,13 +16,14 @@ st.markdown(f"""
         [data-testid="stAppViewContainer"] {{
             background-color: {BG_COLOR} !important;
             color: {TEXT_COLOR};
+            overflow: hidden;
         }}
         [data-testid="stHeader"] {{background: rgba(0,0,0,0);}}
         [data-testid="stToolbar"] {{right: 2rem;}}
         @keyframes twinkle {{
-            0% {{opacity: 0.2;}}
-            50% {{opacity: 1;}}
-            100% {{opacity: 0.2;}}
+            0% {{opacity: 0.2; transform: scale(1);}}
+            50% {{opacity: 1; transform: scale(1.3);}}
+            100% {{opacity: 0.2; transform: scale(1);}}
         }}
     </style>
 """, unsafe_allow_html=True)
@@ -42,21 +43,24 @@ def header(title, subtitle=""):
 
 
 # ==========================
-# BINTANG (DIPINDAH KE SAMPING)
+# BINTANG (LEBIH PADAT)
 # ==========================
-def draw_stars(num_stars=120):
-    """Bintang di sisi kiri dan kanan layar, tidak menutupi konten tengah."""
+def draw_stars(num_stars=250):
+    """
+    Bintang memenuhi area atas, bawah, kiri, dan kanan
+    tanpa menutupi konten utama di tengah.
+    """
     stars_html = ""
     for _ in range(num_stars):
         left = random.randint(0, 100)
         top = random.randint(0, 100)
 
-        # Hanya tampilkan di sisi kiri (<25%) dan kanan (>75%)
-        if 25 < left < 75:
+        # Hindari area tengah utama (agar teks tetap bersih)
+        if 30 < left < 70 and 25 < top < 75:
             continue
 
-        size = random.randint(6, 14)
-        opacity = random.uniform(0.3, 0.8)
+        size = random.randint(5, 15)
+        opacity = random.uniform(0.3, 0.9)
         duration = random.uniform(1.5, 3.5)
 
         stars_html += f"""
@@ -79,7 +83,7 @@ def draw_stars(num_stars=120):
 # HALAMAN UTAMA
 # ==========================
 if st.session_state.page == "main":
-    draw_stars(num_stars=160)
+    draw_stars(num_stars=250)
     header("🪐 SpaceVision AI", "Jelajahi dunia kecerdasan buatan di galaksi luar angkasa 🚀")
 
     col1, col2, col3 = st.columns([1, 1, 1])
@@ -97,7 +101,7 @@ if st.session_state.page == "main":
 # HALAMAN KLASIFIKASI
 # ==========================
 elif st.session_state.page == "classify":
-    draw_stars(num_stars=160)
+    draw_stars(num_stars=250)
     header("🧠 Klasifikasi Gambar", "Unggah gambar untuk diidentifikasi model AI kamu")
 
     uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
@@ -113,7 +117,7 @@ elif st.session_state.page == "classify":
 # HALAMAN DETEKSI
 # ==========================
 elif st.session_state.page == "detect":
-    draw_stars(num_stars=160)
+    draw_stars(num_stars=250)
     header("🛰️ Deteksi Objek", "Unggah gambar untuk melakukan deteksi objek menggunakan model YOLO")
 
     uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
