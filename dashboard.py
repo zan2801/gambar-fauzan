@@ -84,7 +84,10 @@ if st.session_state.page == "main":
 
     col1, col2, col3 = st.columns([1, 1, 1])
     with col2:
-        st.write("### Pilih Misi Kamu:")
+    st.markdown(
+        f"<h3 style='text-align:center; color:#ffffff;'>Pilih Misi Kamu:</h3>",
+        unsafe_allow_html=True
+    )   
         st.write("")
         if st.button("🧠 Klasifikasi Gambar", use_container_width=True):
             st.session_state.page = "classify"
