@@ -4,25 +4,24 @@ import tensorflow as tf
 from tensorflow.keras.preprocessing import image
 import numpy as np
 from PIL import Image
-import cv2
 import random
 
 # ==========================
-# CONFIG
+# KONFIGURASI HALAMAN
 # ==========================
 st.set_page_config(page_title="SpaceVision AI", page_icon="🪐", layout="wide")
 
-BG_COLOR = "#05091a"      # warna background
+BG_COLOR = "#05091a"      # latar belakang gelap
 TEXT_COLOR = "#ffffff"    # warna teks umum
-SIDEBAR_TITLE_COLOR = "#00BFFF"  # warna teks "Pilih Mode"
+TEXT_SUB = "#708090"      # warna teks sekunder
+TITLE_MODE_COLOR = "#00BFFF"  # warna teks "Pilih Misi Kamu:"
 
-# Styling background & bintang
-st.markdown(
-    f"""
+# Styling dasar + animasi bintang
+st.markdown(f"""
     <style>
         [data-testid="stAppViewContainer"] {{
             background-color: {BG_COLOR} !important;
-            color: {TEXT_COLOR};
+            color: {TEXT_SUB};
             overflow: hidden;
         }}
         [data-testid="stHeader"], [data-testid="stToolbar"] {{
@@ -34,12 +33,12 @@ st.markdown(
             100% {{ opacity: 0.3; transform: scale(1); }}
         }}
     </style>
-    """,
-    unsafe_allow_html=True,
-)
+""", unsafe_allow_html=True)
 
-# Fungsi bintang
-def draw_stars(num_stars=300):
+# ==========================
+# BINTANG LATAR
+# ==========================
+def draw_stars(num_stars=400):
     star_colors = ["#FFD700", "#FFF8DC", "#B0E0E6", "#F0E68C", "#FFFFFF"]
     stars_html = "<div style='position:fixed; inset:0; z-index:0; pointer-events:none;'>"
     for _ in range(num_stars):
@@ -69,38 +68,54 @@ def load_models():
 yolo_model, classifier = load_models()
 
 # ==========================
-# UI
+# NAVIGASI
 # ==========================
-draw_stars()
-st.title("🪐 SpaceVision AI")
+if "page" not in st.session_state:
+    st.session_state.page = "main"
 
-st.sidebar.markdown(
-    f"<h3 style='color:{SIDEBAR_TITLE_COLOR};'>Pilih Mode:</h3>",
-    unsafe_allow_html=True
-)
-menu = st.sidebar.selectbox("", ["Deteksi Objek (YOLO)", "Klasifikasi Gambar"])
+# ==========================
+# HEADER
+# ==========================
+def header(title, subtitle=""):
+    st.markdown(f"<h1 style='text-align:center; color:{TEXT_COLOR};'>{title}</h1>", unsafe_allow_html=True)
+    if subtitle:
+        st.markdown(f"<p style='text-align:center; color:{TEXT_COLOR}; font-size:18px;'>{subtitle}</p>", unsafe_allow_html=True)
+    st.write("")
 
-uploaded_file = st.file_uploader("Unggah Gambar", type=["jpg", "jpeg", "png"])
+# ==========================
+# HALAMAN UTAMA
+# ==========================
+if st.session_state.page == "main":
+    draw_stars()
+    header("🪐 SpaceVision AI", "Jelajahi dunia kecerdasan buatan di galaksi luar angkasa 🚀")
 
-if uploaded_file is not None:
-    img = Image.open(uploaded_file)
-    st.image(img, caption="Gambar yang Diupload", use_container_width=True)
+    col1, col2, col3 = st.columns([1, 1, 1])
+    with col2:
+        st.markdown(f"<h3 style='text-align:center; color:{TITLE_MODE_COLOR};'>Pilih Misi Kamu:</h3>", unsafe_allow_html=True)
+        st.write("")
+        if st.button("🧠 Klasifikasi Gambar", use_container_width=True):
+            st.session_state.page = "classify"
+            st.rerun()
+        if st.button("🛰️ Deteksi Objek", use_container_width=True):
+            st.session_state.page = "detect"
+            st.rerun()
 
-    if menu == "Deteksi Objek (YOLO)":
-        # Deteksi objek
-        results = yolo_model(img)
-        result_img = results[0].plot()
-        st.image(result_img, caption="Hasil Deteksi", use_container_width=True)
+# ==========================
+# HALAMAN KLASIFIKASI
+# ==========================
+elif st.session_state.page == "classify":
+    draw_stars()
+    header("🧠 Klasifikasi Gambar", "Unggah gambar untuk diidentifikasi oleh model AI kamu")
 
-    elif menu == "Klasifikasi Gambar":
-        # Preprocessing
+    uploaded_file = st.file_uploader("Unggah gambar", type=["jpg", "png", "jpeg"])
+    if uploaded_file:
+        img = Image.open(uploaded_file)
+        st.image(img, caption="Gambar yang diunggah", use_container_width=True)
+
+        # Proses klasifikasi
         img_resized = img.resize((224, 224))
         img_array = image.img_to_array(img_resized)
         img_array = np.expand_dims(img_array, axis=0)
         img_array = img_array / 255.0
 
-        # Prediksi
         prediction = classifier.predict(img_array)
-        class_index = np.argmax(prediction)
-        st.write("### Hasil Prediksi:", class_index)
-        st.write("Probabilitas:", np.max(prediction))
