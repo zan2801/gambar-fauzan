@@ -6,16 +6,13 @@ import numpy as np
 from ultralytics import YOLO
 import tensorflow as tf
 
-# ==========================
-# KONFIGURASI HALAMAN
-# ==========================
+
 st.set_page_config(page_title="Klasifikasi & Deteksi Objek", page_icon="🚀", layout="wide")
 
 BG_COLOR = "#05091a"     
 TEXT_COLOR = "#ffffff"
 TEXT_JUGA = "#708090"
 
-# Gaya dasar halaman
 st.markdown(f"""
     <style>
         [data-testid="stAppViewContainer"] {{
@@ -38,26 +35,20 @@ st.markdown(f"""
     </style>
 """, unsafe_allow_html=True)
 
-# ==========================
-# SIMPAN HALAMAN
-# ==========================
+
 if "page" not in st.session_state:
     st.session_state.page = "main"
 
-# ==========================
-# HEADER
-# ==========================
+
+
 def header(title, subtitle=""):
     st.markdown(f"<h1 style='text-align:center; color:{TEXT_COLOR};'>{title}</h1>", unsafe_allow_html=True)
     if subtitle:
         st.markdown(f"<p style='text-align:center; color:{TEXT_COLOR}; font-size:18px;'>{subtitle}</p>", unsafe_allow_html=True)
     st.write("")
 
-# ==========================
-# BINTANG & SATELIT
-# ==========================
+
 def draw_stars_and_satellites(num_stars=370, num_satellites=10):
-    """Bintang penuh layar + animasi satelit di belakang gambar"""
     star_colors = ["#FFD700", "#FFF8DC", "#B0E0E6", "#F0E68C", "#FFFFFF"]
     html = ""
 
@@ -84,7 +75,6 @@ def draw_stars_and_satellites(num_stars=370, num_satellites=10):
             ">⭐</div>
         """
 
-    # Tambah beberapa satelit kecil di belakang gambar
     for _ in range(num_satellites):
         left = random.randint(0, 100)
         top = random.randint(0, 100)
@@ -106,9 +96,7 @@ def draw_stars_and_satellites(num_stars=370, num_satellites=10):
 
     st.markdown(html, unsafe_allow_html=True)
 
-# ==========================
-# LOAD MODEL
-# ==========================
+
 @st.cache_resource
 def load_models():
     yolo_model = YOLO("model/FauzanAkbar_Laporan4.pt")
@@ -117,9 +105,7 @@ def load_models():
 
 yolo_model, classifier = load_models()
 
-# ==========================
-# HALAMAN UTAMA
-# ==========================
+
 if st.session_state.page == "main":
     draw_stars_and_satellites()
     header("Klasifikasi & Deteksi Objek", "Klasifikasikan dan deteksi objek dengan mudah, cepat, dan akurat💫")
@@ -135,9 +121,7 @@ if st.session_state.page == "main":
             st.session_state.page = "detect"
             st.rerun()
 
-# ==========================
-# HALAMAN KLASIFIKASI
-# ==========================
+
 elif st.session_state.page == "classify":
     draw_stars_and_satellites()
     header("🌑 Klasifikasi Gambar", "Unggah gambar untuk melakukan klasifikasi")
@@ -171,9 +155,7 @@ elif st.session_state.page == "classify":
         st.session_state.page = "main"
         st.rerun()
 
-# ==========================
-# HALAMAN DETEKSI
-# ==========================
+
 elif st.session_state.page == "detect":
     draw_stars_and_satellites()
     header("🪐 Deteksi Objek", "Unggah gambar untuk melakukan deteksi objek")
